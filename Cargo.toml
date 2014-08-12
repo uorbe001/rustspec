@@ -1,0 +1,12 @@
+[package]
+
+name = "rustspec"
+version = "0.0.1"
+authors = ["Unai Orbe <unai@orbe.me>"]
+
+[dependencies.rustspec_assertions]
+git = "https://github.com/uorbe001/rustspec-assertions.git"
+
+[[lib]]
+name = "rustspec"
+path = "src/rustspec/lib.rs"
