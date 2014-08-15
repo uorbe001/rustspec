@@ -32,31 +32,13 @@ fn get_rustspec_extern_crate() -> ast::ViewItem {
     }
 }
 
-fn get_rustspec_assertions_extern_crate() -> ast::ViewItem {
-    ast::ViewItem {
-        node: ast::ViewItemExternCrate(token::str_to_ident("rustspec_assertions"),
-        Some((token::intern_and_get_ident("rustspec_assertions"), ast::CookedStr)),
-        ast::DUMMY_NODE_ID),
-        attrs: vec!(
-            attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
-                InternedString::new("phase"),
-                vec!(
-                    attr::mk_word_item(InternedString::new("link"))
-                    )
-                ))
-            ),
-        vis: ast::Inherited,
-        span: DUMMY_SP
-    }
-}
-
 fn get_rustspec_assertions_use() -> ast::ViewItem {
     let prelude_path = ast::Path {
         span: DUMMY_SP,
         global: false,
         segments: vec!(
             ast::PathSegment {
-                identifier: token::str_to_ident("rustspec_assertions"),
+                identifier: token::str_to_ident("rustspec"),
                 lifetimes: Vec::new(),
                 types: OwnedSlice::empty(),
             }
@@ -108,7 +90,6 @@ impl TestNode for TestContextNode {
                 inner: DUMMY_SP,
                 view_items: vec![
                     get_rustspec_extern_crate(),
-                    get_rustspec_assertions_extern_crate(),
                     get_rustspec_assertions_use()
                 ],
                 items: children_items

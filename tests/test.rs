@@ -1,7 +1,7 @@
 #![feature(phase)]
 
 #[phase(plugin, link)] extern crate rustspec;
-#[phase(plugin, link)] extern crate rustspec_assertions;
+#[phase(plugin)] extern crate rustspec_assertions;
 
 #[deriving(Show)]
 #[deriving(Clone)]
