@@ -10,3 +10,4 @@ git = "https://github.com/uorbe001/rustspec-assertions.git"
 [[lib]]
 name = "rustspec"
 path = "src/rustspec/lib.rs"
+crate_type = ["dylib"]

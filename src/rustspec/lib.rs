@@ -1,66 +1,101 @@
 #![crate_name="rustspec"]
-#![crate_type="lib"]
-#![feature(macro_rules)]
-#![feature(phase)]
+#![crate_type="dylib"]
+#![feature(macro_rules, phase, plugin_registrar)]
 
-#[macro_export]
-pub macro_rules! passes(
-    ($test_name:ident $body:block) => (
-        #[test]
-        fn $test_name() {
-            $body
+extern crate syntax;
+extern crate rustc;
+
+use macro_result::MacroResult;
+use test_context_node::TestContextNode;
+use test_case_node::TestCaseNode;
+use test_node::TestNode;
+
+use std::gc::{Gc};
+use rustc::plugin::Registry;
+use syntax::ext::base::{ExtCtxt, MacResult};
+use syntax::ext::quote::rt::ToTokens;
+use syntax::codemap::Span;
+use syntax::ast;
+use syntax::parse::{token, tts_to_parser};
+use syntax::parse::parser::Parser;
+
+mod macro_result;
+mod test_context_node;
+mod test_case_node;
+mod test_node;
+
+#[plugin_registrar]
+pub fn plugin_registrar(registry: &mut Registry) {
+    registry.register_macro("scenario", macro_scenario);
+}
+
+fn is_skippable(token: syntax::parse::token::Token) -> bool {
+    token == token::LBRACE || token == token::RBRACE ||
+        token == token::LPAREN || token == token::RPAREN ||
+        token == token::COMMA || token == token::SEMI
+}
+
+fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<Gc<syntax::ast::Block>>, Vec<Box<TestNode>>) {
+    let mut nodes: Vec<Box<TestNode>> = Vec::new();
+    let mut before_block = None;
+
+    while parser.token != token::EOF {
+        if is_skippable(parser.token.clone()) {
+            parser.bump();
+            continue;
         }
-    );
-)
 
-#[macro_export]
-pub macro_rules! fails(
-    ($test_name:ident $body:block) => (
-        #[test]
-        #[should_fail]
-        fn $test_name() {
-            $body
+        let ident = parser.parse_ident();
+        let token_str = ident.as_str();
+
+        match token_str {
+            "before" => {
+                if before_block.is_some() {
+                    fail!("More than one before blocks found in the same context.");
+                }
+
+                parser.bump(); // skip  (
+                before_block = Some(parser.parse_block());
+            },
+
+            "when" | "context" | "describe" => {
+                parser.bump(); // skip  (
+                let (name, _) = parser.parse_str();
+                parser.bump(); // skip ,
+                let block_tokens = parser.parse_block().to_tokens(cx);
+                let mut block_parser = tts_to_parser(cx.parse_sess(), block_tokens, cx.cfg());
+                let (b, children) = parse_node(cx, &mut block_parser);
+                nodes.push(TestContextNode::new(name.get().to_string(), b, children));
+            },
+
+            "it" => {
+                parser.bump(); // skip  (
+                let (name, _) = parser.parse_str();
+                parser.bump(); // skip ,
+                let block = parser.parse_block();
+                nodes.push(TestCaseNode::new(name.get().to_string(), block));
+            },
+
+            other =>  {
+                let span = parser.span;
+                parser.span_fatal(span, format!("Unexpected {}", other).as_slice());
+            }
         }
-    );
-)
+    }
 
-#[macro_export]
-pub macro_rules! ignores(
-    ($test_name:ident $body:block) => (
-        #[test]
-        #[ignore]
-        fn $test_name() {
-            $body
-        }
-    );
-)
+    (before_block, nodes)
+}
 
-#[macro_export]
-pub macro_rules! when(
-    ($context_name:ident { $(it $body:item)* $(test $tests:item)* }) => (
-        mod $context_name {
-            extern crate rustspec_assertions;
-            #[allow(unused_imports)]
-            use rustspec_assertions::{expect, eq, be_gt, be_ge, be_le, be_lt};
+pub fn macro_scenario(cx: &mut ExtCtxt, _: Span, tts: &[ast::TokenTree]) -> Box<MacResult> {
+    let mut parser = cx.new_parser_from_tts(tts);
+    // TODO MOD THIS
+    let _ = parser.parse_str();
+    parser.bump();
+    let block_tokens = parser.parse_block().to_tokens(cx);
+    let mut block_parser = tts_to_parser(cx.parse_sess(), block_tokens, cx.cfg());
+    let (_, root_nodes) = parse_node(cx, &mut block_parser);
+    // TODO before for the scenario?
+    let items = root_nodes.iter().map(|i| i.to_item(cx, &mut vec![])).collect();
+    MacroResult::new(items)
+}
 
-            $($body)*
-            $($tests)*
-        }
-    );
-)
-
-#[macro_export]
-pub macro_rules! scenario(
-    ($context_name:ident { $(test $body:item)* }) => (
-        mod $context_name {
-            $($body)*
-        }
-    );
-)
-
-#[macro_export]
-pub macro_rules! lets(
-    ($var_name:ident: $kind:ty -> $value:expr) => (
-        static $var_name: $kind = $value;
-    );
-)
