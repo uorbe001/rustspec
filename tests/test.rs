@@ -18,9 +18,13 @@ impl Add<Point, Point> for Point {
 }
 
 scenario!("Point", {
+    before({
+        let one = 1i;
+    });
+
     describe("#add", {
         before({
-            let point_a = ::Point { x: 1i, y: 1i };
+            let point_a = ::Point { x: one, y: one };
             let point_b = ::Point { x: 2i, y: 2i };
         });
 

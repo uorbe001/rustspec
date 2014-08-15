@@ -1,6 +1,6 @@
 #![crate_name="rustspec"]
 #![crate_type="dylib"]
-#![feature(macro_rules, phase, plugin_registrar)]
+#![feature(macro_rules, plugin_registrar)]
 
 extern crate syntax;
 extern crate rustc;
@@ -108,14 +108,13 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<Gc<syntax::ast::
 
 pub fn macro_scenario(cx: &mut ExtCtxt, _: Span, tts: &[ast::TokenTree]) -> Box<MacResult> {
     let mut parser = cx.new_parser_from_tts(tts);
-    // TODO MOD THIS
-    let _ = parser.parse_str();
+
+    let (name, _) = parser.parse_str();
     parser.bump();
     let block_tokens = parser.parse_block().to_tokens(cx);
     let mut block_parser = tts_to_parser(cx.parse_sess(), block_tokens, cx.cfg());
-    let (_, root_nodes) = parse_node(cx, &mut block_parser);
-    // TODO before for the scenario?
-    let items = root_nodes.iter().map(|i| i.to_item(cx, &mut vec![])).collect();
-    MacroResult::new(items)
+    let (before, children) = parse_node(cx, &mut block_parser);
+    let node = TestContextNode::new(name.get().to_string(), before, children);
+    MacroResult::new(vec![node.to_item(cx, &mut vec![])])
 }
 
