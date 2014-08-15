@@ -94,3 +94,8 @@ If you want to help build this up, feel free to open a PR on this repo or the [a
 ## Work in progress
 
 Please be aware this is work in progress and I'm a total rust newbie, so expect bugs .
+
+### TODO
+
+* Find a way to get rid of the assertions dependency for clients.
+* Add after
