@@ -18,7 +18,7 @@ impl Add<Point, Point> for Point {
 }
 
 scenario!("Point", {
-    when("#add", {
+    describe("#add", {
         before({
             let point_a = ::Point { x: 1i, y: 1i };
             let point_b = ::Point { x: 2i, y: 2i };
@@ -28,6 +28,18 @@ scenario!("Point", {
             let point_c = point_a + point_b;
             expect(point_c.x).to(eq!(3i));
             expect(point_c.y).to(eq!(3i));
+        });
+
+        it.fails("adds two points and fails", {
+            let point_c = point_a + point_b;
+            expect(point_c.x).to(eq!(4i));
+            expect(point_c.y).to(eq!(4i));
+        });
+
+        it.ignores("ignores this", {
+            let point_c = point_a + point_b;
+            expect(point_c.x).to(eq!(4i));
+            expect(point_c.y).to(eq!(4i));
         });
 
         context("testing PartialEq", {
@@ -42,15 +54,3 @@ scenario!("Point", {
         });
     });
 })
-
-
-//         it fails!(adds_two_points_wrong {
-//             let point_c = point_a + point_b;
-//             expect(point_c.x).to(eq!(4i));
-//             expect(point_c.y).to(eq!(4i));
-//         })
-
-//         it ignores!(this_is_ignored {
-//             expect(1i).not_to(eq!(2i));
-//         })
-

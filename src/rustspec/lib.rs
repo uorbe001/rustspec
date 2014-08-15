@@ -35,6 +35,30 @@ fn is_skippable(token: syntax::parse::token::Token) -> bool {
         token == token::COMMA || token == token::SEMI
 }
 
+fn extract_test_node_data(parser: &mut Parser) -> (String, Gc<ast::Block>) {
+    parser.bump(); // skip  (
+    let (name, _) = parser.parse_str();
+    parser.bump(); // skip ,
+    let block = parser.parse_block();
+    (name.get().to_string(), block)
+}
+
+fn parse_test_node(parser: &mut Parser) -> Box<TestCaseNode> {
+    let mut should_fail = false;
+    let mut should_be_ignored = false;
+
+    if parser.token == token::DOT {
+        parser.bump();
+        let ident = parser.parse_ident();
+        let token_str = ident.as_str();
+        should_fail = token_str == "fails";
+        should_be_ignored = token_str == "ignores";
+    }
+
+    let (name, block) = extract_test_node_data(parser);
+    TestCaseNode::new(name, block, should_fail, should_be_ignored)
+}
+
 fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<Gc<syntax::ast::Block>>, Vec<Box<TestNode>>) {
     let mut nodes: Vec<Box<TestNode>> = Vec::new();
     let mut before_block = None;
@@ -69,11 +93,7 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<Gc<syntax::ast::
             },
 
             "it" => {
-                parser.bump(); // skip  (
-                let (name, _) = parser.parse_str();
-                parser.bump(); // skip ,
-                let block = parser.parse_block();
-                nodes.push(TestCaseNode::new(name.get().to_string(), block));
+                nodes.push(parse_test_node(parser));
             },
 
             other =>  {

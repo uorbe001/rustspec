@@ -6,6 +6,7 @@ use test_node::TestNode;
 use std::gc::{Gc, GC};
 use syntax::ext::base::ExtCtxt;
 use syntax::codemap::DUMMY_SP;
+use syntax::codemap::Spanned;
 use syntax::ast_util::empty_generics;
 use syntax::abi;
 use syntax::ast;
@@ -14,14 +15,34 @@ use syntax::ext::build::AstBuilder;
 
 pub struct TestCaseNode {
     name: String,
-    block: Gc<syntax::ast::Block>
+    block: Gc<syntax::ast::Block>,
+    should_fail: bool,
+    should_be_ignored: bool
 }
 
 impl TestCaseNode {
     pub fn new(name: String,
-               block: Gc<syntax::ast::Block>
+               block: Gc<syntax::ast::Block>,
+               should_fail: bool,
+               should_be_ignored: bool
               ) -> Box<TestCaseNode> {
-        box TestCaseNode { name: name, block: block }
+        box TestCaseNode { name: name, block: block, should_fail: should_fail, should_be_ignored: should_be_ignored }
+    }
+
+    fn build_test_attributes(&self, cx: &mut ExtCtxt) -> Vec<Spanned<syntax::ast::Attribute_>> {
+        let mut attributes = vec![];
+
+        attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("test"))));
+
+        if self.should_fail {
+            attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("should_fail"))));
+        }
+
+        if self.should_be_ignored {
+            attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("ignore"))));
+        }
+
+        attributes
     }
 }
 
@@ -45,12 +66,9 @@ impl TestNode for TestCaseNode {
             }
         };
 
-        let attr_test = cx.attribute(DUMMY_SP,
-             cx.meta_word(DUMMY_SP, token::InternedString::new("test")));
-
         box(GC) ast::Item {
             ident: cx.ident_of(self.get_name().as_slice()),
-            attrs: vec!(attr_test),
+            attrs: self.build_test_attributes(cx),
             id: ast::DUMMY_NODE_ID,
             node: ast::ItemFn(
                 cx.fn_decl(Vec::new(), cx.ty_nil()),
