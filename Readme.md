@@ -98,4 +98,5 @@ Please be aware this is work in progress and I'm a total rust newbie, so expect 
 ### TODO
 
 * Find a way to get rid of the assertions dependency for clients.
+* Improve failed assertion line reporting (trying to find out a way to do this, having issues apparently related to [15962](https://github.com/rust-lang/rust/issues/15962) and [16472](https://github.com/rust-lang/rust/issues/16472)).
 * Add after
