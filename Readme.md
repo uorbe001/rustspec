@@ -89,7 +89,7 @@ For a complete list of matchers and more examples, please check the [assertion t
 
 ### BUG
 
-There is an issue with the latest rust nighly build and the hygiene checking, so referencing a variable inside one of the matchers (eq!, be_gt!, etc) won't work with rust versions that are after [this PR](https://github.com/rust-lang/rust/pull/16477) was merged (which is why the build is failing at the moment). (I'll remove this note as soon as I see it works again).
+There is an issue with the latest rust nighly build and the hygiene checking, so referencing a variable inside one of the matchers (eq!, be_gt!, etc) won't work with rust versions that are after [this PR](https://github.com/rust-lang/rust/pull/16477) was merged (which is why the build is failing at the moment). I'll remove this note as soon as I see it works again, currently tracking the issue [here](https://github.com/rust-lang/rust/issues/8063).
 
 ## Collaborating
 
