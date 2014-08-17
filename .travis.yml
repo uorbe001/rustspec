@@ -1,5 +1,9 @@
+before_install:
+        - sudo add-apt-repository --yes ppa:hansjorg/rust
+        - sudo add-apt-repository --yes ppa:cmrx64/cargo
+        - sudo apt-get update -qq
 install:
-        - curl https://static.rust-lang.org/rustup.sh | sudo sh -
+        - sudo apt-get install -qq rust-0.11 cargo
 script:
-        - cargo build --verbose
-        - cargo test --verbose
+        - cargo build
+        - cargo test

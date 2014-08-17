@@ -1,4 +1,4 @@
-# Rustspec
+# Rustspec ![build status](https://travis-ci.org/uorbe001/rustspec.svg?branch=master)
 
 Nice syntax sugar and errors for bdd testing in rust (similar to rspec or chai).
 
@@ -86,6 +86,10 @@ The crate relies on macros, so you'll need to add this to your test.rs, lib.rs o
 ```
 
 For a complete list of matchers and more examples, please check the [assertion tests](https://github.com/uorbe001/rustspec-assertions/tree/master/tests) and for syntax examples check the [tests](tests/).
+
+### BUG
+
+There is an issue with the latest rust nighly build and the hygiene checking, so referencing a variable inside one of the matchers (eq!, be_gt!, etc) won't work with rust versions that are after [this PR](https://github.com/rust-lang/rust/pull/16477) was merged. (I'll remove this note as soon as I see it works again).
 
 ## Collaborating
 
