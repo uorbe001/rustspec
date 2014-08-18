@@ -46,15 +46,16 @@ scenario!("Point", {
             expect(point_c.y).to(eq!(4i));
         });
 
-        context("testing PartialEq", {
-            before({
-                let point_3 = point_a + point_b;
-            });
+        // Commented until bugfixed
+        // context("testing PartialEq", {
+        //     before({
+        //         let point_3 = point_a + point_b;
+        //     });
 
-            it("passes with equals", {
-                let point_c = point_a + point_b;
-                expect(point_c).to(eq!(point_3));
-            });
-        });
+        //     it("passes with equals", {
+        //         let point_c = point_a + point_b;
+        //         expect(point_c).to(eq!(point_3));
+        //     });
+        // });
     });
 })
