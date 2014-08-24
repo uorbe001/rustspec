@@ -6,7 +6,7 @@ extern crate syntax;
 extern crate rustc;
 extern crate rustspec_assertions;
 
-pub use rustspec_assertions::{expect, eq, be_gt, be_ge, be_lt, be_le};
+pub use rustspec_assertions::{expect, eq, be_gt, be_ge, be_lt, be_le, contain, be_false, be_true, be_some, be_none};
 
 use macro_result::MacroResult;
 use test_context_node::TestContextNode;
