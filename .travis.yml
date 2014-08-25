@@ -6,5 +6,6 @@ install:
         - curl http://www.rust-lang.org/rustup.sh | sudo sh -
         # - sudo apt-get install -qq rust-nightly cargo
 script:
+        - cargo update --verbose
         - cargo build --verbose
         - cargo test --verbose
