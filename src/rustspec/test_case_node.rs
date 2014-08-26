@@ -33,6 +33,7 @@ impl TestCaseNode {
         let mut attributes = vec![];
 
         attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("test"))));
+        attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("allow(non_snake_case_functions)"))));
 
         if self.should_fail {
             attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("should_fail"))));
