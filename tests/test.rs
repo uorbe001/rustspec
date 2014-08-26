@@ -40,7 +40,7 @@ scenario!("Point", {
             expect(&point_c.y).to(eq!(4i));
         });
 
-        it.ignores("ignores this", {
+        it.ignores("ignores this and something CAPITALIZED", {
             let point_c = point_a + point_b;
             expect(&point_c.x).to(eq!(4i));
             expect(&point_c.y).to(eq!(4i));

@@ -18,15 +18,16 @@ fn get_rustspec_extern_crate() -> ast::ViewItem {
         node: ast::ViewItemExternCrate(token::str_to_ident("rustspec"),
         Some((token::intern_and_get_ident("rustspec"), ast::CookedStr)),
         ast::DUMMY_NODE_ID),
-        attrs: vec!(
+        attrs: vec![
             attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
                 InternedString::new("phase"),
                 vec!(
                     attr::mk_word_item(InternedString::new("plugin")),
                     attr::mk_word_item(InternedString::new("link"))
                     )
-                ))
+                )
             ),
+        ],
         vis: ast::Inherited,
         span: DUMMY_SP
     }
@@ -82,9 +83,17 @@ impl TestNode for TestContextNode {
             before_blocks.pop();
         }
 
+        let mut attributes = vec![];
+
+        attributes.push(attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
+                InternedString::new("allow"),
+                vec!(attr::mk_word_item(InternedString::new("unused_attribute")))
+            )
+        ));
+
         box(GC) ast::Item {
             ident: cx.ident_of(self.get_name().as_slice()),
-            attrs: vec![],
+            attrs: attributes,
             id: ast::DUMMY_NODE_ID,
             node: ast::ItemMod(Mod {
                 inner: DUMMY_SP,

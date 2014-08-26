@@ -10,8 +10,10 @@ use syntax::codemap::Spanned;
 use syntax::ast_util::empty_generics;
 use syntax::abi;
 use syntax::ast;
+use syntax::attr;
 use syntax::parse::token;
 use syntax::ext::build::AstBuilder;
+use syntax::parse::token::InternedString;
 
 pub struct TestCaseNode {
     name: String,
@@ -33,7 +35,11 @@ impl TestCaseNode {
         let mut attributes = vec![];
 
         attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("test"))));
-        attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("allow(non_snake_case_functions)"))));
+        attributes.push(attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
+                InternedString::new("allow"),
+                vec!(attr::mk_word_item(InternedString::new("non_snake_case_functions")))
+            )
+        ));
 
         if self.should_fail {
             attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("should_fail"))));
