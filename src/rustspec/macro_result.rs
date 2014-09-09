@@ -10,7 +10,7 @@ pub struct MacroResult {
 }
 
 impl MacroResult {
-    pub fn new(items: Vec<Gc<ast::Item>>) -> Box<MacResult> {
+    pub fn new(items: Vec<Gc<ast::Item>>) -> Box<MacResult + 'static> {
         box MacroResult { items: items  } as Box<MacResult>
     }
 }

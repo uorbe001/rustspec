@@ -1,12 +1,12 @@
 [root]
 name = "rustspec"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
- "rustspec_assertions 0.1.0 (git+https://github.com/uorbe001/rustspec-assertions.git#89742c26797ea4ea144a3426cb70abcdd98d313d)",
+ "rustspec_assertions 0.1.0 (git+https://github.com/uorbe001/rustspec-assertions.git#be18ed3ba6cafc284c40e81c0c77171d38b93361)",
 ]
 
 [[package]]
 name = "rustspec_assertions"
 version = "0.1.0"
-source = "git+https://github.com/uorbe001/rustspec-assertions.git#89742c26797ea4ea144a3426cb70abcdd98d313d"
+source = "git+https://github.com/uorbe001/rustspec-assertions.git#be18ed3ba6cafc284c40e81c0c77171d38b93361"
 

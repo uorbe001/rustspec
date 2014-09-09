@@ -59,13 +59,13 @@ fn get_rustspec_assertions_use() -> ast::ViewItem {
 pub struct TestContextNode {
     name: String,
     before: Option<Gc<syntax::ast::Block>>,
-    children: Vec<Box<TestNode>>
+    children: Vec<Box<TestNode + 'static>>
 }
 
 impl TestContextNode {
     pub fn new(name: String,
                before: Option<Gc<syntax::ast::Block>>,
-               children: Vec<Box<TestNode>>
+               children: Vec<Box<TestNode + 'static>>
               ) -> Box<TestContextNode> {
         box TestContextNode { name: name, children: children, before: before }
     }
@@ -88,6 +88,12 @@ impl TestNode for TestContextNode {
         attributes.push(attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
                 InternedString::new("allow"),
                 vec!(attr::mk_word_item(InternedString::new("unused_attribute")))
+            )
+        ));
+
+        attributes.push(attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
+                InternedString::new("allow"),
+                vec!(attr::mk_word_item(InternedString::new("non_snake_case")))
             )
         ));
 

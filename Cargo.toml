@@ -1,13 +1,13 @@
 [package]
 
 name = "rustspec"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Unai Orbe <unai@orbe.me>"]
 
 [dependencies.rustspec_assertions]
 git = "https://github.com/uorbe001/rustspec-assertions.git"
 
-[[lib]]
+[lib]
 name = "rustspec"
 path = "src/rustspec/lib.rs"
 crate_type = ["dylib"]

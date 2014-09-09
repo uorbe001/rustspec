@@ -62,7 +62,7 @@ fn parse_test_node(parser: &mut Parser) -> Box<TestCaseNode> {
     TestCaseNode::new(name, block, should_fail, should_be_ignored)
 }
 
-fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<Gc<syntax::ast::Block>>, Vec<Box<TestNode>>) {
+fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<Gc<syntax::ast::Block>>, Vec<Box<TestNode + 'static>>) {
     let mut nodes: Vec<Box<TestNode>> = Vec::new();
     let mut before_block = None;
 
@@ -109,7 +109,7 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<Gc<syntax::ast::
     (before_block, nodes)
 }
 
-pub fn macro_scenario(cx: &mut ExtCtxt, _: Span, tts: &[ast::TokenTree]) -> Box<MacResult> {
+pub fn macro_scenario(cx: &mut ExtCtxt, _: Span, tts: &[ast::TokenTree]) -> Box<MacResult + 'static> {
     let mut parser = cx.new_parser_from_tts(tts);
 
     let (name, _) = parser.parse_str();

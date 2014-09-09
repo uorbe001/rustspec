@@ -37,7 +37,7 @@ impl TestCaseNode {
         attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("test"))));
         attributes.push(attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
                 InternedString::new("allow"),
-                vec!(attr::mk_word_item(InternedString::new("non_snake_case_functions")))
+                vec!(attr::mk_word_item(InternedString::new("non_snake_case")))
             )
         ));
 
