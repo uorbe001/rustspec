@@ -2,11 +2,11 @@ extern crate syntax;
 
 use test_node::TestNode;
 
-use std::gc::{Gc, GC};
 use syntax::ext::base::ExtCtxt;
 use syntax::codemap;
 use syntax::codemap::DUMMY_SP;
 use syntax::ast;
+use syntax::ptr::P;
 use syntax::ast::Mod;
 use syntax::attr;
 use syntax::parse::token;
@@ -46,7 +46,7 @@ fn get_rustspec_assertions_use() -> ast::ViewItem {
         ),
     };
 
-    let vp = box(GC) codemap::dummy_spanned(ast::ViewPathGlob(prelude_path, ast::DUMMY_NODE_ID));
+    let vp = P(codemap::dummy_spanned(ast::ViewPathGlob(prelude_path, ast::DUMMY_NODE_ID)));
 
     ast::ViewItem {
         node: ast::ViewItemUse(vp),
@@ -58,13 +58,13 @@ fn get_rustspec_assertions_use() -> ast::ViewItem {
 
 pub struct TestContextNode {
     name: String,
-    before: Option<Gc<syntax::ast::Block>>,
+    before: Option<P<ast::Block>>,
     children: Vec<Box<TestNode + 'static>>
 }
 
 impl TestContextNode {
     pub fn new(name: String,
-               before: Option<Gc<syntax::ast::Block>>,
+               before: Option<P<ast::Block>>,
                children: Vec<Box<TestNode + 'static>>
               ) -> Box<TestContextNode> {
         box TestContextNode { name: name, children: children, before: before }
@@ -72,12 +72,13 @@ impl TestContextNode {
 }
 
 impl TestNode for TestContextNode {
-    fn to_item(&self, cx: &mut ExtCtxt, before_blocks: &mut Vec<Gc<syntax::ast::Block>>) -> Gc<ast::Item> {
-        if self.before.is_some() {
-            before_blocks.push(self.before.unwrap());
-        }
+    fn to_item(&self, cx: &mut ExtCtxt, before_blocks: &mut Vec<P<ast::Block>>) -> P<ast::Item> {
+        self.before.as_ref().and_then(|before| {
+            before_blocks.push(before.clone());
+            None::<P<ast::Block>>
+        });
 
-        let children_items = self.children.iter().map(|i| i.to_item(cx, before_blocks)).collect::<Vec<Gc<syntax::ast::Item>>>();
+        let children_items = self.children.iter().map(|i| i.to_item(cx, before_blocks)).collect::<Vec<P<ast::Item>>>();
 
         if self.before.is_some() {
             before_blocks.pop();
@@ -97,7 +98,7 @@ impl TestNode for TestContextNode {
             )
         ));
 
-        box(GC) ast::Item {
+        P(ast::Item {
             ident: cx.ident_of(self.get_name().as_slice()),
             attrs: attributes,
             id: ast::DUMMY_NODE_ID,
@@ -111,7 +112,7 @@ impl TestNode for TestContextNode {
             }),
             vis: ast::Inherited,
             span: DUMMY_SP,
-        }
+        })
     }
 
     fn get_name(&self) -> String {

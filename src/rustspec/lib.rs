@@ -13,12 +13,12 @@ use test_context_node::TestContextNode;
 use test_case_node::TestCaseNode;
 use test_node::TestNode;
 
-use std::gc::{Gc};
 use rustc::plugin::Registry;
 use syntax::ext::base::{ExtCtxt, MacResult};
 use syntax::ext::quote::rt::ToTokens;
 use syntax::codemap::Span;
 use syntax::ast;
+use syntax::ptr::P;
 use syntax::parse::{token, tts_to_parser};
 use syntax::parse::parser::Parser;
 
@@ -38,7 +38,7 @@ fn is_skippable(token: syntax::parse::token::Token) -> bool {
         token == token::COMMA || token == token::SEMI
 }
 
-fn extract_test_node_data(parser: &mut Parser) -> (String, Gc<ast::Block>) {
+fn extract_test_node_data(parser: &mut Parser) -> (String, P<ast::Block>) {
     parser.bump(); // skip  (
     let (name, _) = parser.parse_str();
     parser.bump(); // skip ,
@@ -62,7 +62,7 @@ fn parse_test_node(parser: &mut Parser) -> Box<TestCaseNode> {
     TestCaseNode::new(name, block, should_fail, should_be_ignored)
 }
 
-fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<Gc<syntax::ast::Block>>, Vec<Box<TestNode + 'static>>) {
+fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, Vec<Box<TestNode + 'static>>) {
     let mut nodes: Vec<Box<TestNode>> = Vec::new();
     let mut before_block = None;
 
@@ -92,7 +92,7 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<Gc<syntax::ast::
                 let block_tokens = parser.parse_block().to_tokens(cx);
                 let mut block_parser = tts_to_parser(cx.parse_sess(), block_tokens, cx.cfg());
                 let (b, children) = parse_node(cx, &mut block_parser);
-                nodes.push(TestContextNode::new(name.get().to_string(), b, children));
+                nodes.push(TestContextNode::new(name.get().to_string(), Some(P(b.unwrap().deref().clone())), children));
             },
 
             "it" => {
