@@ -92,7 +92,16 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, 
                 let block_tokens = parser.parse_block().to_tokens(cx);
                 let mut block_parser = tts_to_parser(cx.parse_sess(), block_tokens, cx.cfg());
                 let (b, children) = parse_node(cx, &mut block_parser);
-                nodes.push(TestContextNode::new(name.get().to_string(), Some(P(b.unwrap().deref().clone())), children));
+
+                let before = if b.is_some() {
+                    Some(P(b.unwrap().deref().clone()))
+                } else { None };
+
+                nodes.push(TestContextNode::new(
+                        name.get().to_string(),
+                        before,
+                        children
+                ));
             },
 
             "it" => {

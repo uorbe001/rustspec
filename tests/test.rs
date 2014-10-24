@@ -58,4 +58,10 @@ scenario!("Point", {
         //     });
         // });
     });
+
+    describe("a block without before", {
+        it("works", {
+            expect(&false).not_to(be_true!());
+        });
+    })
 })
