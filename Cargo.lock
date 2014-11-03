@@ -2,7 +2,7 @@
 name = "rustspec"
 version = "0.1.2"
 dependencies = [
- "rustspec_assertions 0.1.0 (git+https://github.com/uorbe001/rustspec-assertions.git#ed1f1ad967b4167c75ddfde74c71994f8767a749)",
+ "rustspec_assertions 0.1.0 (git+https://github.com/uorbe001/rustspec-assertions.git)",
 ]
 
 [[package]]

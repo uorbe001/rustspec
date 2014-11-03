@@ -33,9 +33,11 @@ pub fn plugin_registrar(registry: &mut Registry) {
 }
 
 fn is_skippable(token: syntax::parse::token::Token) -> bool {
-    token == token::LBRACE || token == token::RBRACE ||
-        token == token::LPAREN || token == token::RPAREN ||
-        token == token::COMMA || token == token::SEMI
+    token == token::OpenDelim(token::Brace) ||
+        token == token::CloseDelim(token::Brace) ||
+        token == token::OpenDelim(token::Paren) ||
+        token == token::CloseDelim(token::Paren) ||
+        token == token::Comma || token == token::Semi
 }
 
 fn extract_test_node_data(parser: &mut Parser) -> (String, P<ast::Block>) {
@@ -50,7 +52,7 @@ fn parse_test_node(parser: &mut Parser) -> Box<TestCaseNode> {
     let mut should_fail = false;
     let mut should_be_ignored = false;
 
-    if parser.token == token::DOT {
+    if parser.token == token::Dot {
         parser.bump();
         let ident = parser.parse_ident();
         let token_str = ident.as_str();
@@ -66,7 +68,7 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, 
     let mut nodes: Vec<Box<TestNode>> = Vec::new();
     let mut before_block = None;
 
-    while parser.token != token::EOF {
+    while parser.token != token::Eof {
         if is_skippable(parser.token.clone()) {
             parser.bump();
             continue;
@@ -78,7 +80,7 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, 
         match token_str {
             "before" => {
                 if before_block.is_some() {
-                    fail!("More than one before blocks found in the same context.");
+                    panic!("More than one before blocks found in the same context.");
                 }
 
                 parser.bump(); // skip  (
