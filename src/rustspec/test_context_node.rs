@@ -11,7 +11,6 @@ use syntax::ast::Mod;
 use syntax::attr;
 use syntax::parse::token;
 use syntax::parse::token::InternedString;
-use syntax::owned_slice::OwnedSlice;
 
 fn get_rustspec_extern_crate() -> ast::ViewItem {
     ast::ViewItem {
@@ -40,8 +39,7 @@ fn get_rustspec_assertions_use() -> ast::ViewItem {
         segments: vec!(
             ast::PathSegment {
                 identifier: token::str_to_ident("rustspec"),
-                lifetimes: Vec::new(),
-                types: OwnedSlice::empty(),
+                parameters: ast::PathParameters::none()
             }
         ),
     };
