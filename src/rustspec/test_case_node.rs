@@ -78,7 +78,14 @@ impl TestNode for TestCaseNode {
             attrs: self.build_test_attributes(cx),
             id: ast::DUMMY_NODE_ID,
             node: ast::ItemFn(
-                cx.fn_decl(Vec::new(), cx.ty_nil()),
+                cx.fn_decl(
+                    Vec::new(),
+                    P(ast::Ty {
+                        id: ast::DUMMY_NODE_ID,
+                        node: ast::TyTup(vec![]),
+                        span: DUMMY_SP,
+                    })
+                ),
                 ast::NormalFn,
                 abi::Rust,
                 empty_generics(),
