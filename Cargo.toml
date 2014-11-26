@@ -3,9 +3,12 @@
 name = "rustspec"
 version = "0.1.2"
 authors = ["Unai Orbe <unai@orbe.me>"]
+description = "BDD style test library"
+keywords = ["testing", "bdd", "expect", "describe"]
+license = "MIT"
 
-[dependencies.rustspec_assertions]
-git = "https://github.com/uorbe001/rustspec-assertions.git"
+[dependencies]
+rustspec_assertions = "~0.1.0"
 
 [lib]
 name = "rustspec"
