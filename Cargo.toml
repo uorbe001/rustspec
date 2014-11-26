@@ -1,11 +1,14 @@
 [package]
 
 name = "rustspec"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Unai Orbe <unai@orbe.me>"]
 description = "BDD style test library"
 keywords = ["testing", "bdd", "expect", "describe"]
 license = "MIT"
+homepage = "https://github.com/uorbe001/rustspec"
+repository = "https://github.com/uorbe001/rustspec"
+readme = "Readme.md"
 
 [dependencies]
 rustspec_assertions = "~0.1.0"
