@@ -12,7 +12,7 @@ struct Point {
 }
 
 impl Add<Point, Point> for Point {
-    fn add(&self, other: &Point) -> Point {
+    fn add(self, other: Point) -> Point {
         Point { x: self.x + other.x, y: self.y + other.y }
     }
 }
@@ -47,21 +47,21 @@ scenario!("Point", {
         });
 
         // Commented until bugfixed
-        // context("testing PartialEq", {
-        //     before({
-        //         let point_3 = point_a + point_b;
-        //     });
+         // context("testing PartialEq", {
+             // before({
+             //     let point_3 = point_a + point_b;
+             // });
 
-        //     it("passes with equals", {
-        //         let point_c = point_a + point_b;
-        //         expect(&point_c).to(eq!(point_3));
-        //     });
-        // });
+             // it("passes with equals", {
+             //     let point_c = point_a + point_b;
+             //     expect(&point_c).to(eq!(point_3));
+             // });
+         // });
     });
 
     describe("a block without before", {
         it("works", {
             expect(&false).not_to(be_true!());
         });
-    })
-})
+    });
+});

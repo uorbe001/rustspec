@@ -1,0 +1,4 @@
+rust:
+        volumes:
+                - $PWD:/code
+        image: uorbe001/rust-toolbelt

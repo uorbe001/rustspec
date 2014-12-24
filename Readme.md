@@ -19,6 +19,8 @@ git = "https://github.com/uorbe001/rustspec.git"
 Now you should be able to use these assertions in your tests by loading the cargo:
 
 ```
+#![feature(phase)]
+
 #[phase(plugin, link)] extern crate rustspec;
 #[phase(plugin)] extern crate rustspec_assertions;
 
@@ -31,7 +33,7 @@ struct Point {
 }
 
 impl Add<Point, Point> for Point {
-    fn add(&self, other: &Point) -> Point {
+    fn add(self, other: Point) -> Point {
         Point { x: self.x + other.x, y: self.y + other.y }
     }
 }
@@ -59,24 +61,35 @@ scenario!("Point", {
             expect(&point_c.y).to(eq!(4i));
         });
 
-        it.ignores("ignores this", {
+        it.ignores("ignores this and something CAPITALIZED", {
             let point_c = point_a + point_b;
             expect(&point_c.x).to(eq!(4i));
             expect(&point_c.y).to(eq!(4i));
         });
 
-        context("testing PartialEq", {
-            before({
-                let point_3 = point_a + point_b;
-            });
+        // There is a bug on rustc's hygien checking preventing this
+	// from working for now, point_3 is not defined on the 'expect'
+	// line because of it... essentially, it means you can use
+	// variables defined on before blocks on the expect(), but not
+	// on the eq!()
+         // context("testing PartialEq", {
+             // before({
+             //     let point_3 = point_a + point_b;
+             // });
 
-            it("passes with equals", {
-                let point_c = point_a + point_b;
-                expect(&point_c).to(eq!(point_3));
-            });
+             // it("passes with equals", {
+             //     let point_c = point_a + point_b;
+             //     expect(&point_c).to(eq!(point_3));
+             // });
+         // });
+    });
+
+    describe("a block without before", {
+        it("works", {
+            expect(&false).not_to(be_true!());
         });
     });
-})
+});
 ```
 
 The crate relies on macros, so you'll need to add this to your test.rs, lib.rs or main.rs file:

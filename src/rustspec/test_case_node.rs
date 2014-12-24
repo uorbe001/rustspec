@@ -63,12 +63,12 @@ impl TestNode for TestCaseNode {
             let (before_view_items, before_stmts) = before_blocks.iter().fold(
                 (vec![], vec![]),
                 |(view_accum, stmts_accum), b|
-                (view_accum + b.view_items, stmts_accum + b.stmts)
+                (view_accum + b.view_items.as_slice(), stmts_accum + b.stmts.as_slice())
             );
 
             P(ast::Block {
-                view_items: before_view_items + block.view_items,
-                stmts: before_stmts + block.stmts,
+                view_items: before_view_items.clone() + block.view_items.as_slice(),
+                stmts: before_stmts.clone() + block.stmts.as_slice(),
                 ..block
             })
         };
@@ -86,7 +86,7 @@ impl TestNode for TestCaseNode {
                         span: DUMMY_SP,
                     })
                 ),
-                ast::NormalFn,
+                ast::Unsafety::Normal,
                 abi::Rust,
                 empty_generics(),
                 body.clone()
