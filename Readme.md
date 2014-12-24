@@ -9,11 +9,9 @@ I find the errors rust's built-in assert! gives pretty limited, and I personally
 Add this as a dependency to your `Cargo.toml` and run `cargo build`:
 
 ```
-[dependencies.rustspec_assertions]
-git = "https://github.com/uorbe001/rustspec-assertions.git"
-
-[dependencies.rustspec]
-git = "https://github.com/uorbe001/rustspec.git"
+[dependencies]
+rustspec_assertions = "~0.1.4"
+rustspec = "~0.1.3"
 ```
 
 Now you should be able to use these assertions in your tests by loading the cargo:
