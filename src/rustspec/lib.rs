@@ -1,8 +1,9 @@
 #![crate_name="rustspec"]
 #![crate_type="dylib"]
-#![feature(macro_rules, plugin_registrar)]
+#![feature(plugin_registrar)]
 
 extern crate syntax;
+extern crate core;
 extern crate rustc;
 extern crate rustspec_assertions;
 
@@ -13,6 +14,7 @@ use test_context_node::TestContextNode;
 use test_case_node::TestCaseNode;
 use test_node::TestNode;
 
+use self::core::ops::Deref;
 use rustc::plugin::Registry;
 use syntax::ext::base::{ExtCtxt, MacResult};
 use syntax::ext::quote::rt::ToTokens;

@@ -1,8 +1,10 @@
 extern crate syntax;
 extern crate rustc;
+extern crate core;
 
 use test_node::TestNode;
 
+use self::core::ops::Deref;
 use syntax::ext::base::ExtCtxt;
 use syntax::codemap::DUMMY_SP;
 use syntax::codemap::Spanned;
@@ -28,7 +30,7 @@ impl TestCaseNode {
                should_fail: bool,
                should_be_ignored: bool
               ) -> Box<TestCaseNode> {
-        box TestCaseNode { name: name, block: block, should_fail: should_fail, should_be_ignored: should_be_ignored }
+        Box::new(TestCaseNode { name: name, block: block, should_fail: should_fail, should_be_ignored: should_be_ignored })
     }
 
     fn build_test_attributes(&self, cx: &mut ExtCtxt) -> Vec<Spanned<ast::Attribute_>> {

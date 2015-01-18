@@ -65,7 +65,7 @@ impl TestContextNode {
                before: Option<P<ast::Block>>,
                children: Vec<Box<TestNode + 'static>>
               ) -> Box<TestContextNode> {
-        box TestContextNode { name: name, children: children, before: before }
+        Box::new(TestContextNode { name: name, children: children, before: before })
     }
 }
 

@@ -11,7 +11,7 @@ pub struct MacroResult {
 
 impl MacroResult {
     pub fn new(items: Vec<P<ast::Item>>) -> Box<MacResult + 'static> {
-        box MacroResult { items: items  } as Box<MacResult>
+        Box::new(MacroResult { items: items  }) as Box<MacResult>
     }
 }
 
