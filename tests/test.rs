@@ -1,4 +1,4 @@
-#![feature(plugin, core)]
+#![feature(plugin)]
 #[plugin] #[macro_use] extern crate rustspec;
 #[macro_use] extern crate rustspec_assertions;
 
