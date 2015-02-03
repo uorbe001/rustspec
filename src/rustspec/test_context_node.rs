@@ -12,11 +12,12 @@ use syntax::attr;
 use syntax::parse::token;
 use syntax::parse::token::InternedString;
 
-fn get_rustspec_extern_crate() -> ast::ViewItem {
-    ast::ViewItem {
-        node: ast::ViewItemExternCrate(token::str_to_ident("rustspec"),
-        Some((token::intern_and_get_ident("rustspec"), ast::CookedStr)),
-        ast::DUMMY_NODE_ID),
+fn get_rustspec_extern_crate() -> P<ast::Item> {
+    P(ast::Item {
+        node: ast::ItemExternCrate(Some((token::intern_and_get_ident("rustspec"), ast::CookedStr))),
+        id: ast::DUMMY_NODE_ID,
+        ident: token::str_to_ident("rustspec"),
+
         attrs: vec![
             attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
                 InternedString::new("phase"),
@@ -29,10 +30,10 @@ fn get_rustspec_extern_crate() -> ast::ViewItem {
         ],
         vis: ast::Inherited,
         span: DUMMY_SP
-    }
+    })
 }
 
-fn get_rustspec_assertions_use() -> ast::ViewItem {
+fn get_rustspec_assertions_use() -> P<ast::Item> {
     let prelude_path = ast::Path {
         span: DUMMY_SP,
         global: false,
@@ -44,14 +45,16 @@ fn get_rustspec_assertions_use() -> ast::ViewItem {
         ),
     };
 
-    let vp = P(codemap::dummy_spanned(ast::ViewPathGlob(prelude_path, ast::DUMMY_NODE_ID)));
+    let vp = P(codemap::dummy_spanned(ast::ViewPathGlob(prelude_path)));
 
-    ast::ViewItem {
-        node: ast::ViewItemUse(vp),
+    P(ast::Item {
+        node: ast::ItemUse(vp),
         attrs: Vec::new(),
         vis: ast::Inherited,
         span: DUMMY_SP,
-    }
+        id: ast::DUMMY_NODE_ID,
+        ident: token::str_to_ident("rustspec")
+    })
 }
 
 pub struct TestContextNode {
@@ -76,7 +79,9 @@ impl TestNode for TestContextNode {
             None::<P<ast::Block>>
         });
 
-        let children_items = self.children.iter().map(|i| i.to_item(cx, before_blocks)).collect::<Vec<P<ast::Item>>>();
+        let mut children_items = self.children.iter().map(|i| i.to_item(cx, before_blocks)).collect::<Vec<P<ast::Item>>>();
+        children_items.push(get_rustspec_extern_crate());
+        children_items.push(get_rustspec_assertions_use());
 
         if self.before.is_some() {
             before_blocks.pop();
@@ -102,10 +107,6 @@ impl TestNode for TestContextNode {
             id: ast::DUMMY_NODE_ID,
             node: ast::ItemMod(Mod {
                 inner: DUMMY_SP,
-                view_items: vec![
-                    get_rustspec_extern_crate(),
-                    get_rustspec_assertions_use()
-                ],
                 items: children_items
             }),
             vis: ast::Inherited,

@@ -1,12 +1,12 @@
-#![feature(plugin)]
+#![feature(plugin, core)]
 #[plugin] #[macro_use] extern crate rustspec;
 #[macro_use] extern crate rustspec_assertions;
 
 use std::ops::Add;
 
-#[deriving(Show)]
-#[deriving(Clone)]
-#[deriving(PartialEq)]
+#[derive(Show)]
+#[derive(Clone)]
+#[derive(PartialEq)]
 struct Point {
     x: isize,
     y: isize

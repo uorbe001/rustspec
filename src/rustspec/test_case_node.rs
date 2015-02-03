@@ -17,6 +17,18 @@ use syntax::parse::token;
 use syntax::ext::build::AstBuilder;
 use syntax::parse::token::InternedString;
 
+fn is_item(stmt: &P<ast::Stmt>) -> bool {
+    match stmt.node {
+        ast::StmtDecl(ref decl, _) => {
+            match decl.node {
+                ast::DeclItem(_) => true,
+                _ => false,
+            }
+        },
+        _ => false,
+    }
+}
+
 pub struct TestCaseNode {
     name: String,
     block: P<ast::Block>,
@@ -62,15 +74,17 @@ impl TestNode for TestCaseNode {
         } else {
             let block = self.block.deref().clone();
 
-            let (before_view_items, before_stmts) = before_blocks.iter().fold(
-                (vec![], vec![]),
-                |(view_accum, stmts_accum), b|
-                (view_accum + b.view_items.as_slice(), stmts_accum + b.stmts.as_slice())
-            );
+            let mut before_view_items: Vec<P<ast::Stmt>> = vec![];
+            let mut before_stmts: Vec<P<ast::Stmt>> = vec![];
+
+            for before_block in before_blocks.iter() {
+                let items: Vec<P<ast::Stmt>> = before_block.stmts.clone().into_iter().filter(is_item).collect();
+                before_view_items.push_all(items.as_slice());
+                before_stmts.push_all(before_block.stmts.as_slice());
+            }
 
             P(ast::Block {
-                view_items: before_view_items.clone() + block.view_items.as_slice(),
-                stmts: before_stmts.clone() + block.stmts.as_slice(),
+                stmts: before_view_items + before_stmts.as_slice() + block.stmts.as_slice(),
                 ..block
             })
         };
