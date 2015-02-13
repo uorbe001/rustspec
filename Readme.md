@@ -17,20 +17,24 @@ rustspec = "~0.1.3"
 Now you should be able to use these assertions in your tests by loading the cargo:
 
 ```
-#![feature(phase)]
+#![feature(plugin)]
+#![plugin(rustspec, rustspec_assertions)]
+#[macro_use] extern crate rustspec;
+#[macro_use] extern crate rustspec_assertions;
 
-#[phase(plugin, link)] extern crate rustspec;
-#[phase(plugin)] extern crate rustspec_assertions;
+use std::ops::Add;
 
-#[deriving(Show)]
-#[deriving(Clone)]
-#[deriving(PartialEq)]
+#[derive(Debug)]
+#[derive(Clone)]
+#[derive(PartialEq)]
 struct Point {
-    x: int,
-    y: int
+    x: isize,
+    y: isize
 }
 
-impl Add<Point, Point> for Point {
+impl Add for Point {
+    type Output = Point;
+
     fn add(self, other: Point) -> Point {
         Point { x: self.x + other.x, y: self.y + other.y }
     }
@@ -38,31 +42,31 @@ impl Add<Point, Point> for Point {
 
 scenario!("Point", {
     before({
-        let one = 1i;
+        let one = 1is;
     });
 
     describe("#add", {
         before({
             let point_a = ::Point { x: one, y: one };
-            let point_b = ::Point { x: 2i, y: 2i };
+            let point_b = ::Point { x: 2is, y: 2is };
         });
 
         it("adds two points", {
             let point_c = point_a + point_b;
-            expect(&point_c.x).to(eq!(3i));
-            expect(&point_c.y).to(eq!(3i));
+            expect(&point_c.x).to(eq!(3is));
+            expect(&point_c.y).to(eq!(3is));
         });
 
         it.fails("adds two points and fails", {
             let point_c = point_a + point_b;
-            expect(&point_c.x).to(eq!(4i));
-            expect(&point_c.y).to(eq!(4i));
+            expect(&point_c.x).to(eq!(4is));
+            expect(&point_c.y).to(eq!(4is));
         });
 
         it.ignores("ignores this and something CAPITALIZED", {
             let point_c = point_a + point_b;
-            expect(&point_c.x).to(eq!(4i));
-            expect(&point_c.y).to(eq!(4i));
+            expect(&point_c.x).to(eq!(4is));
+            expect(&point_c.y).to(eq!(4is));
         });
 
         // There is a bug on rustc's hygien checking preventing this
@@ -93,7 +97,10 @@ scenario!("Point", {
 The crate relies on macros, so you'll need to add this to your test.rs, lib.rs or main.rs file:
 
 ```
-#![feature(phase)]
+#![feature(plugin)]
+#![plugin(rustspec, rustspec_assertions)]
+#[macro_use] extern crate rustspec;
+#[macro_use] extern crate rustspec_assertions;
 ```
 
 For a complete list of matchers and more examples, please check the [assertion tests](https://github.com/uorbe001/rustspec-assertions/tree/master/tests) and for syntax examples check the [tests](tests/).

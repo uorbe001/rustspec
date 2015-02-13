@@ -1,10 +1,11 @@
 #![feature(plugin)]
-#[plugin] #[macro_use] extern crate rustspec;
+#![plugin(rustspec, rustspec_assertions)]
+#[macro_use] extern crate rustspec;
 #[macro_use] extern crate rustspec_assertions;
 
 use std::ops::Add;
 
-#[derive(Show)]
+#[derive(Debug)]
 #[derive(Clone)]
 #[derive(PartialEq)]
 struct Point {

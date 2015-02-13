@@ -47,7 +47,7 @@ fn extract_test_node_data(parser: &mut Parser) -> (String, P<ast::Block>) {
     let (name, _) = parser.parse_str();
     parser.bump(); // skip ,
     let block = parser.parse_block();
-    (name.get().to_string(), block)
+    (name.deref().to_string(), block)
 }
 
 fn parse_test_node(parser: &mut Parser) -> Box<TestCaseNode> {
@@ -102,7 +102,7 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, 
                 } else { None };
 
                 nodes.push(TestContextNode::new(
-                        name.get().to_string(),
+                        name.deref().to_string(),
                         before,
                         children
                 ));
@@ -130,7 +130,7 @@ pub fn macro_scenario(cx: &mut ExtCtxt, _: Span, tts: &[ast::TokenTree]) -> Box<
     let block_tokens = parser.parse_block().to_tokens(cx);
     let mut block_parser = tts_to_parser(cx.parse_sess(), block_tokens, cx.cfg());
     let (before, children) = parse_node(cx, &mut block_parser);
-    let node = TestContextNode::new(name.get().to_string(), before, children);
+    let node = TestContextNode::new(name.deref().to_string(), before, children);
     MacroResult::new(vec![node.to_item(cx, &mut vec![])])
 }
 
