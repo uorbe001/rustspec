@@ -18,16 +18,7 @@ fn get_rustspec_extern_crate() -> P<ast::Item> {
         id: ast::DUMMY_NODE_ID,
         ident: token::str_to_ident("rustspec"),
 
-        attrs: vec![
-            attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
-                InternedString::new("phase"),
-                vec!(
-                    attr::mk_word_item(InternedString::new("plugin")),
-                    attr::mk_word_item(InternedString::new("link"))
-                    )
-                )
-            ),
-        ],
+        attrs: vec![],
         vis: ast::Inherited,
         span: DUMMY_SP
     })
