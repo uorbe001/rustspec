@@ -1,6 +1,6 @@
 [root]
 name = "rustspec"
-version = "0.1.9"
+version = "0.1.10"
 dependencies = [
  "rustspec_assertions 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

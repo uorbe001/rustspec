@@ -14,7 +14,7 @@ use syntax::parse::token::InternedString;
 
 fn get_rustspec_extern_crate() -> P<ast::Item> {
     P(ast::Item {
-        node: ast::ItemExternCrate(Some((token::intern_and_get_ident("rustspec"), ast::CookedStr))),
+        node: ast::ItemExternCrate(Some(token::intern("rustspec"))),
         id: ast::DUMMY_NODE_ID,
         ident: token::str_to_ident("rustspec"),
 
