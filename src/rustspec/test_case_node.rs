@@ -56,7 +56,7 @@ impl TestCaseNode {
         ));
 
         if self.should_fail {
-            attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("should_fail"))));
+            attributes.push(cx.attribute(DUMMY_SP, cx.meta_word(DUMMY_SP, token::InternedString::new("should_panic"))));
         }
 
         if self.should_be_ignored {
