@@ -1,6 +1,6 @@
 #![crate_name="rustspec"]
 #![crate_type="dylib"]
-#![feature(plugin_registrar, rustc_private, collections, core)]
+#![feature(plugin_registrar, rustc_private, collections, core, convert)]
 
 extern crate syntax;
 extern crate core;
