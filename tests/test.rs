@@ -1,6 +1,7 @@
 #![feature(plugin)]
 #![plugin(rustspec, rustspec_assertions)]
-#[macro_use] extern crate rustspec;
+#![allow(plugin_as_library)]
+extern crate rustspec;
 #[macro_use] extern crate rustspec_assertions;
 
 use std::ops::Add;

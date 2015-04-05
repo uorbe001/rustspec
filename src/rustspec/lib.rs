@@ -114,7 +114,7 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, 
 
             other =>  {
                 let span = parser.span;
-                parser.span_fatal(span, format!("Unexpected {}", other).as_slice());
+                parser.span_fatal(span, format!("Unexpected {}", other).as_ref());
             }
         }
     }

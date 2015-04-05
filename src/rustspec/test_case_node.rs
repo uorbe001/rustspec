@@ -90,7 +90,7 @@ impl TestNode for TestCaseNode {
         };
 
         P(ast::Item {
-            ident: cx.ident_of(self.get_name().as_slice()),
+            ident: cx.ident_of(self.get_name().as_ref()),
             attrs: self.build_test_attributes(cx),
             id: ast::DUMMY_NODE_ID,
             node: ast::ItemFn(

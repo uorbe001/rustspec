@@ -82,18 +82,12 @@ impl TestNode for TestContextNode {
 
         attributes.push(attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
                 InternedString::new("allow"),
-                vec!(attr::mk_word_item(InternedString::new("unused_attribute")))
-            )
-        ));
-
-        attributes.push(attr::mk_attr_outer(attr::mk_attr_id(), attr::mk_list_item(
-                InternedString::new("allow"),
                 vec!(attr::mk_word_item(InternedString::new("non_snake_case")))
             )
         ));
 
         P(ast::Item {
-            ident: cx.ident_of(self.get_name().as_slice()),
+            ident: cx.ident_of(self.get_name().as_ref()),
             attrs: attributes,
             id: ast::DUMMY_NODE_ID,
             node: ast::ItemMod(Mod {
