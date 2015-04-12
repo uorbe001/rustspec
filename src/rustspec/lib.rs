@@ -42,21 +42,23 @@ fn is_skippable(token: syntax::parse::token::Token) -> bool {
         token == token::Comma || token == token::Semi
 }
 
+#[allow(unused_must_use)]
 fn extract_test_node_data(parser: &mut Parser) -> (String, P<ast::Block>) {
     parser.bump(); // skip  (
-    let (name, _) = parser.parse_str();
+    let (name, _) = parser.parse_str().ok().unwrap();
     parser.bump(); // skip ,
-    let block = parser.parse_block();
+    let block = parser.parse_block().ok().unwrap();
     (name.deref().to_string(), block)
 }
 
+#[allow(unused_must_use)]
 fn parse_test_node(parser: &mut Parser) -> Box<TestCaseNode> {
     let mut should_fail = false;
     let mut should_be_ignored = false;
 
     if parser.token == token::Dot {
         parser.bump();
-        let ident = parser.parse_ident();
+        let ident = parser.parse_ident().ok().unwrap();
         let token_str = ident.as_str();
         should_fail = token_str == "fails";
         should_be_ignored = token_str == "ignores";
@@ -66,6 +68,7 @@ fn parse_test_node(parser: &mut Parser) -> Box<TestCaseNode> {
     TestCaseNode::new(name, block, should_fail, should_be_ignored)
 }
 
+#[allow(unused_must_use)]
 fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, Vec<Box<TestNode + 'static>>) {
     let mut nodes: Vec<Box<TestNode>> = Vec::new();
     let mut before_block = None;
@@ -76,7 +79,7 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, 
             continue;
         }
 
-        let ident = parser.parse_ident();
+        let ident = parser.parse_ident().ok().unwrap();
         let token_str = ident.as_str();
 
         match token_str {
@@ -86,14 +89,14 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, 
                 }
 
                 parser.bump(); // skip  (
-                before_block = Some(parser.parse_block());
+                before_block = Some(parser.parse_block().ok().unwrap());
             },
 
             "when" | "context" | "describe" => {
                 parser.bump(); // skip  (
-                let (name, _) = parser.parse_str();
+                let (name, _) = parser.parse_str().ok().unwrap();
                 parser.bump(); // skip ,
-                let block_tokens = parser.parse_block().to_tokens(cx);
+                let block_tokens = parser.parse_block().ok().unwrap().to_tokens(cx);
                 let mut block_parser = tts_to_parser(cx.parse_sess(), block_tokens, cx.cfg());
                 let (b, children) = parse_node(cx, &mut block_parser);
 
@@ -122,12 +125,13 @@ fn parse_node(cx: &mut ExtCtxt, parser: &mut Parser) -> (Option<P<ast::Block>>, 
     (before_block, nodes)
 }
 
+#[allow(unused_must_use)]
 pub fn macro_scenario(cx: &mut ExtCtxt, _: Span, tts: &[ast::TokenTree]) -> Box<MacResult + 'static> {
     let mut parser = cx.new_parser_from_tts(tts);
 
-    let (name, _) = parser.parse_str();
+    let (name, _) = parser.parse_str().ok().unwrap();
     parser.bump();
-    let block_tokens = parser.parse_block().to_tokens(cx);
+    let block_tokens = parser.parse_block().ok().unwrap().to_tokens(cx);
     let mut block_parser = tts_to_parser(cx.parse_sess(), block_tokens, cx.cfg());
     let (before, children) = parse_node(cx, &mut block_parser);
     let node = TestContextNode::new(name.deref().to_string(), before, children);
