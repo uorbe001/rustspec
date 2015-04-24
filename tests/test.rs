@@ -24,31 +24,31 @@ impl Add for Point {
 
 scenario!("Point", {
     before({
-        let one = 1is;
+        let one = 1isize;
     });
 
     describe("#add", {
         before({
             let point_a = ::Point { x: one, y: one };
-            let point_b = ::Point { x: 2is, y: 2is };
+            let point_b = ::Point { x: 2isize, y: 2isize };
         });
 
         it("adds two points", {
             let point_c = point_a + point_b;
-            expect(&point_c.x).to(eq!(3is));
-            expect(&point_c.y).to(eq!(3is));
+            expect(&point_c.x).to(eq!(3isize));
+            expect(&point_c.y).to(eq!(3isize));
         });
 
         it.fails("adds two points and fails", {
             let point_c = point_a + point_b;
-            expect(&point_c.x).to(eq!(4is));
-            expect(&point_c.y).to(eq!(4is));
+            expect(&point_c.x).to(eq!(4isize));
+            expect(&point_c.y).to(eq!(4isize));
         });
 
         it.ignores("ignores this and something CAPITALIZED", {
             let point_c = point_a + point_b;
-            expect(&point_c.x).to(eq!(4is));
-            expect(&point_c.y).to(eq!(4is));
+            expect(&point_c.x).to(eq!(4isize));
+            expect(&point_c.y).to(eq!(4isize));
         });
 
         // Commented until bugfixed
